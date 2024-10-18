@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use Illuminate\Http\Request;
+use App\Filters\V1\ProductFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
@@ -14,10 +16,17 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::paginate(10);
-        return new ProductCollection($products);
+
+        $filter = new ProductFilter;
+
+        $filterItems = $filter->transform($request);
+        
+        $products = Product::where($filterItems);
+        // dd($products);
+// 
+        return new ProductCollection($products->paginate()->appends($request->query()));
     }
 
     /**
