@@ -16,11 +16,26 @@ class ProductFactory extends Factory
      */
     public function definition(): array
     {
+        $categories = [
+            'Mobile Phones',
+            'Laptops',
+            'Tablets',
+            'Televisions',
+            'Cameras',
+            'Headphones',
+            'Smart Watches',
+            'Speakers',
+            'Gaming Consoles',
+            'Accessories'
+        ];
+        
+
         return [
             'name' => $this->faker->word(),
             'description' => $this->faker->paragraph(),
             'price' => $this->faker->randomFloat(2, 1, 1000),
             'stock' => $this->faker->numberBetween(0, 100),
+            'category' => $this->faker->randomElement($categories),
             'image_url' => $this->faker->imageUrl(),
         ];
     }

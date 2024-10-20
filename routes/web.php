@@ -2,9 +2,18 @@
 
 use Illuminate\Support\Facades\Route;
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::get('/', function () {
+    return view('dashboard');
+})->name('dashboard');
+
+Route::get('/products', function () {
+    return view('products.index');
+})->name('products.index');
+
+Route::get('/products/detail/{product}', function () {
+    return view('products.product_detail');
+})->name('products.detail');
+
 
 // Route::redirect('/','/api/v1/products');
 
