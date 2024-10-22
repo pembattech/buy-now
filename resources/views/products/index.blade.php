@@ -29,7 +29,7 @@
                     <a href="/products/detail/${product.id}" class="product-item border p-4 hover:bg-gray-100 transition cursor-pointer" data-id="${product.id}">
                         <img src="${product.imageUrl}" alt="${product.name}">
                         <h3 class="font-bold text-lg">${truncateText(product.name, 30)}</h3>
-                        <p class="font-thin">${truncateText(product.description, 100)}</p>
+                        <p class="font-thin text-gray-800">${truncateText(product.description, 100)}</p>
                         <p>Price: $${product.price}</p>
                         <p class="mt-4">${stockStatus}</p>
                     </a>

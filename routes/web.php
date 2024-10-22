@@ -14,6 +14,10 @@ Route::get('/products/detail/{product}', function () {
     return view('products.product_detail');
 })->name('products.detail');
 
+Route::get('/cart', function () {
+    return view('carts.index');
+})->name('carts.index');
+
 
 // Route::redirect('/','/api/v1/products');
 

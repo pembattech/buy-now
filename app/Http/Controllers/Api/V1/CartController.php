@@ -68,7 +68,6 @@ class CartController extends Controller
      */
     public function show(Cart $cart)
     {
-        // return 'dfa';
         return new CartResource($cart);
     }
 
