@@ -1,5 +1,5 @@
 <nav class="sticky top-0 bg-white">
-    <div class="flex justify-between items-center px-32 py-4">
+    <div class="flex justify-between items-center px-32">
         <div class="logo">
             <a href="/" class="flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse">
                 <img src="https://flowbite.com/docs/images/logo.svg" class="h-8" alt="Device Store Logo" />
@@ -31,7 +31,7 @@
                         <path d="M12.13,14.04h11.22l8.41,49.93h-2.61c-4.24,0-7.7,3.32-7.7,7.39c0,4.09,3.46,7.41,7.7,7.41h53.94 c0.69,0,1.24-0.55,1.24-1.22c0-0.69-0.55-1.24-1.24-1.24H29.14c-2.89,0-5.24-2.22-5.24-4.95s2.36-4.93,5.24-4.93h53.94 c0.69,0,1.24-0.57,1.24-1.24c0-0.67-0.55-1.22-1.24-1.22H69.47c-0.02,0-0.06,0.04-0.1,0.04c-0.04,0-0.08-0.02-0.12-0.02 c-0.04,0-0.06-0.02-0.08-0.02H49.12c-0.02,0-0.04,0.02-0.06,0.02c-0.06,0-0.1,0.02-0.14,0.02c-0.04,0-0.06-0.04-0.1-0.04H34.25 L25.6,12.61c-0.1-0.61-0.61-1.02-1.22-1.02H12.13c-0.67,0-1.22,0.55-1.22,1.22C10.91,13.47,11.46,14.04,12.13,14.04z" />
                     </svg>
                 </a>
-                <div class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full top-4 end-1">8</div>
+                <div class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full top-4 end-1 hidden" id="cart-item-num"></div>
             </div>
             
             <a href="#" class="mx-1 p-2 bg-gray-800 rounded-md hover:bg-gray-900 text-white">Login</a>

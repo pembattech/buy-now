@@ -17,19 +17,15 @@ class CartController extends Controller
     {
         // TODO: Fix Admin can view all the cart instead of the below code!
         if (Auth::check()) {
-            // User is authenticated
             $userId = Auth::user()->id;
-            // Retrieve or create the cart for the authenticated user
             $cart = Cart::firstOrCreate(['user_id' => $userId]);
         } else {
-            // User is a guest
             $guestIdentifier = $request->cookie('guest_identifier');
 
             if (!$guestIdentifier) {
-                // If no guest identifier is found, create a new guest identifier
-                $guestData = getGuest($request); // Get guest data including identifier and cookie
+                $guestData = getGuest($request);
                 $guest_id = $guestData['guest_identifier'];
-                $cart = Cart::firstOrCreate(['guest_id' => $guest_id]); // Create cart for the new guest
+                $cart = Cart::firstOrCreate(['guest_id' => $guest_id]);
             } else {
                 // Retrieve the cart for the existing guest
                 $cart = Cart::where('guest_id', $guestIdentifier)->with('cartItems')->first();
@@ -41,7 +37,6 @@ class CartController extends Controller
             $cart = Auth::check() ? Cart::firstOrCreate(['user_id' => $userId]) : Cart::firstOrCreate(['guest_id' => $guestIdentifier]);
         }
 
-        // Prepare the JSON response
         $response = response()->json([
             'success' => true,
             'cart' => new CartResource($cart),
@@ -106,7 +101,7 @@ class CartController extends Controller
                 if ($cart->user_id !== $userId) {
                     return response()->json([
                         'success' => false,
-                        'message' => 'You do not have permission to delete this cart.'
+                        'message' => 'You do not have permission to view this cart.'
                     ], 403);
                 }
             } else {
@@ -122,7 +117,7 @@ class CartController extends Controller
                 if ($cart->guest_id !== $guestIdentifier) {
                     return response()->json([
                         'success' => false,
-                        'message' => 'You do not have permission to delete this cart.'
+                        'message' => 'You do not have permission to view this cart.'
                     ], 403);
                 }
             }

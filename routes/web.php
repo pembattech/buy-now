@@ -1,6 +1,9 @@
 <?php
 
+use Illuminate\Support\Facades\Log;
+use App\Models\Cart;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 Route::get('/', function () {
     return view('dashboard');

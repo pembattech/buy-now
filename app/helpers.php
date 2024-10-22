@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Http\Request;
 use App\Models\Guest;
+use App\Models\Cart;
 
 if (!function_exists('getGuest')) {
     function getGuest(Request $request)
@@ -18,7 +19,8 @@ if (!function_exists('getGuest')) {
             Guest::firstOrCreate(['guest_identifier' => $guestIdentifier]);
 
             // Create a cookie to store the guest identifier for 60 minutes
-            $cookie = Cookie::make('guest_identifier', $guestIdentifier, 60);
+            $cookie = Cookie::make(name: 'guest_identifier', value: $guestIdentifier, minutes: 60);
+
         } else {
             // If the cookie already exists, ensure a guest record is created
             Guest::firstOrCreate(['guest_identifier' => $guestIdentifier]);

@@ -9,7 +9,7 @@
             More</button>
     </div>
 
-    <script>
+    {{-- <script>
         window.onload = function() {
             loadProducts(1);
         };
@@ -64,5 +64,27 @@
                 return text;
             }
         }
-    </script>
+
+        fetchCartItemNum()
+
+        function fetchCartItemNum() {
+            $.ajax({
+                url: `/api/v1/cart/`,
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    const cartItems = response.cart.items;
+                    console.log('-');
+                    console.log(cartItems);
+                    console.log('-');
+
+                    // Get the length of the items array
+                    const itemsLength = cartItems.length;
+                    console.log('Number of items in cart:', itemsLength);
+
+                    $('#cart-item-num').text(itemsLength);
+                }
+            });
+        }
+    </script> --}}
 </x-app-layout>

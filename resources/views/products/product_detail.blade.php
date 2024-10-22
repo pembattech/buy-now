@@ -35,7 +35,7 @@
         </div>
     </div>
 
-    <script>
+    {{-- <script>
         $(document).ready(function() {
             const productId = window.location.pathname.split('/').pop();
 
@@ -109,8 +109,8 @@
                     dataType: 'json',
                     success: function(response) {
                         console.log(response);
+                        alert(response)
                         $('#addtocart')[0].reset();
-                        alert(response.message);
 
                     },
                     error: function(xhr, status, error) {
@@ -119,6 +119,6 @@
                 });
             });
         });
-    </script>
+    </script> --}}
 
 </x-app-layout>
