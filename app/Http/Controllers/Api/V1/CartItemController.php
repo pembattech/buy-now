@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\StoreCartItemRequest;
@@ -18,7 +19,7 @@ class CartItemController extends Controller
      */
     public function index()
     {
-        //
+        // 
     }
 
     /**
@@ -34,13 +35,16 @@ class CartItemController extends Controller
      */
     public function store(StoreCartItemRequest $request)
     {
+        // Find the product
         $product = Product::find($request->product_id);
 
         if (!$product) {
             return response()->json(['message' => 'Product not found.'], 404);
         }
 
-        $cartItem = CartItem::where('cart_id', $request->cart_id)->where('product_id', $request->product_id)->first();
+        $cartItem = CartItem::where('cart_id', $request->cart_id)
+            ->where('product_id', $request->product_id)
+            ->first();
 
         if ($cartItem) {
             // Update existing cart item quantity and price
@@ -48,14 +52,16 @@ class CartItemController extends Controller
             $new_price = $new_quantity * $product->price;
 
             $cartItem->update(['quantity' => $new_quantity, 'price' => $new_price]);
+            $message = "{$product->name} has been updated in your cart.";
         } else {
             // Add new cart item
-            CartItem::create([
+            $cartItem = CartItem::create([
                 'cart_id' => $request->cart_id,
                 'product_id' => $request->product_id,
                 'quantity' => $request->quantity,
                 'price' => $product->price * $request->quantity,
             ]);
+            $message = "{$product->name} has been added to your cart.";
         }
 
         // Sum up the total price of all items in the cart
@@ -64,10 +70,19 @@ class CartItemController extends Controller
         // Update the total price in the cart
         Cart::where('id', $request->cart_id)->update(['total_price' => $totalPrice]);
 
-        return response()->json([
+        // Prepare the response
+        $response = response()->json([
             'success' => true,
-            'message' => $cartItem ? "{$product->name} has been updated in your cart." : "{$product->name} has been added to your cart.",
+            'message' => $message,
+            'cart_id' => $request->cart_id, // Return the cart ID if needed
         ]);
+
+        // Attach the guest cookie if it exists
+        if (property_exists($request, 'guestCookie')) {
+            $response->withCookie($request->guestCookie);
+        }
+
+        return $response;
     }
 
     /**

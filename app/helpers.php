@@ -1,28 +1,33 @@
 <?php
 
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Http\Request;
 use App\Models\Guest;
-use App\Models\Cart;
 
 if (!function_exists('getGuest')) {
     function getGuest(Request $request)
     {
+        // Check if the guest identifier cookie exists
         $guestIdentifier = $request->cookie('guest_identifier');
 
         if (!$guestIdentifier) {
             // Generate a new guest identifier
             $guestIdentifier = bin2hex(random_bytes(16));
 
-            // Return a response with the cookie
-            $cookie = cookie('guest_identifier', $guestIdentifier, 60 * 24 * 7); // 1 week
+            // Create a new guest record in the database
+            Guest::firstOrCreate(['guest_identifier' => $guestIdentifier]);
 
-            $guest = Guest::firstOrCreate(['guest_identifier' => $guestIdentifier]);
-
-            // Return the guest object and the cookie
-            return ['guest' => $guest, 'cookie' => $cookie];
+            // Create a cookie to store the guest identifier for 60 minutes
+            $cookie = Cookie::make('guest_identifier', $guestIdentifier, 60);
         } else {
-            $guest = Guest::firstOrCreate(['guest_identifier' => $guestIdentifier]);
-            return ['guest_identifier' => $guest['guest_identifier']];
+            // If the cookie already exists, ensure a guest record is created
+            Guest::firstOrCreate(['guest_identifier' => $guestIdentifier]);
+
+            // Use the cookie that already exists
+            $cookie = Cookie::make('guest_identifier', $guestIdentifier, 60); // Optional: Refresh the cookie expiration
         }
+
+        // Return the guest identifier and the cookie
+        return ['guest_identifier' => $guestIdentifier, 'cookie' => $cookie];
     }
 }

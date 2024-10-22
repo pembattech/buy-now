@@ -33,20 +33,34 @@ class CartController extends Controller
      */
     public function store(StoreCartRequest $request)
     {
-        if (Auth::check()) {
-            $userId = Auth::user()->id;
-            $cart = Cart::firstOrCreate([
-                'user_id' => $userId,
-            ]);
-        } else {
-            $guest_id = getGuest($request);
 
-            $cart = Cart::firstOrCreate(attributes: [
-                'guest_id' => $guest_id['guest_identifier'],
-            ]);
+        if (Auth::check()) {
+            // User is authenticated
+            $userId = Auth::user()->id;
+
+            // Create or retrieve the cart for the authenticated user
+            $cart = Cart::firstOrCreate(['user_id' => $userId]);
+        } else {
+            // User is a guest
+            $guestData = getGuest($request); // Get guest data including identifier and cookie
+
+            // Access the guest identifier
+            $guest_id = $guestData['guest_identifier'];
+
+            // Create or retrieve the cart for the guest
+            $cart = Cart::fir2stOrCreate(['guest_id' => $guest_id]);
         }
 
-        return response()->json(['cart'=> $cart]);
+        // Prepare the JSON response
+        $response = response()->json(['cart' => $cart]);
+
+        // If the user is a guest, attach the cookie to the response
+        if (!Auth::check()) {
+            $response->withCookie($guestData['cookie']);
+        }
+
+        // Return the response
+        return $response;
     }
 
     /**

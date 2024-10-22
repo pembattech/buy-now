@@ -32,21 +32,22 @@ class StoreCartItemRequest extends FormRequest
 
     protected function prepareForValidation()
     {
-
         if (Auth::check()) {
             $userId = Auth::user()->id;
             $cart = Cart::firstOrCreate(['user_id' => $userId]);
         } else {
-            $guest_id = getGuest($this);
+            $guestData = getGuest($this); // Get guest data including identifier and cookie
+            $guest_id = $guestData['guest_identifier'];
+            $cart = Cart::firstOrCreate(['guest_id' => $guest_id]);
 
-            $cart = Cart::firstOrCreate(attributes: [
-                'guest_id' => $guest_id['guest_identifier'],
-            ]);
+
+            // Store the cookie in the class for later use
+            $this->guestCookie = $guestData['cookie'];
         }
 
         $this->merge([
             'cart_id' => $cart->id,
-            'product_id' => $this->productId
+            'product_id' => $this->productId,
         ]);
     }
 }
