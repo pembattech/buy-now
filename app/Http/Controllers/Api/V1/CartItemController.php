@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use Illuminate\Support\Facades\Cookie;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\StoreCartItemRequest;
@@ -112,8 +111,54 @@ class CartItemController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(CartItem $cartItem)
+    /**
+     * Remove the specified cart item using product_id.
+     */
+    public function destroy(Request $request, $productId)
     {
-        //
+        if (Auth::check()) {
+            // User is authenticated, get the user_id
+            $userId = Auth::user()->id;
+
+            $cartItem = CartItem::where('product_id', $productId)
+                ->whereHas('cart', function ($query) use ($userId) {
+                    $query->where('user_id', $userId);
+                })
+                ->first();
+        } else {
+            $guestIdentifier = $request->cookie('guest_identifier');
+
+            if (!$guestIdentifier) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Guest identifier not found.'
+                ], 400);
+            }
+
+            $cartItem = CartItem::where('product_id', $productId)
+                ->whereHas('cart', function ($query) use ($guestIdentifier) {
+                    $query->where('guest_id', $guestIdentifier);
+                })
+                ->first();
+        }
+
+        if (!$cartItem) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Item not found in the cart.'
+            ], 404);
+        }
+
+        $cartItem->delete();
+
+        // update the total price in the cart after deletion
+        $totalPrice = CartItem::where('cart_id', $cartItem->cart_id)->sum('price');
+        Cart::where('id', $cartItem->cart_id)->update(['total_price' => $totalPrice]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Item removed from cart successfully.',
+            'total_price' => $totalPrice
+        ]);
     }
 }
