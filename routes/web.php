@@ -1,15 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Log;
-use App\Models\Cart;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
 
 Route::get('/', function () {
-    return view('dashboard');
-})->name('dashboard');
-
-Route::get('/products', function () {
     return view('products.index');
 })->name('products.index');
 
@@ -25,8 +18,6 @@ Route::get('/cart/clear', function () {
     return view('carts.delete');
 })->name('carts.delete');
 
-
-// Route::redirect('/','/api/v1/products');
 
 Route::middleware([
     'auth:sanctum',

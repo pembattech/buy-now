@@ -7,13 +7,10 @@ $.ajaxSetup({
     }
 });
 
-// $(document).ready(function () {
-
 window.onload = function () {
     loadProducts(1);
     fetchCartItemNum()
 };
-// });
 
 function loadProducts(page) {
     $.ajax({
