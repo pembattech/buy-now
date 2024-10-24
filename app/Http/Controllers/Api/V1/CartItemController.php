@@ -148,7 +148,7 @@ class CartItemController extends Controller
                 'message' => 'Item not found in the cart.'
             ], 404);
         }
-
+        
         $cartItem->delete();
 
         // update the total price in the cart after deletion

@@ -1,9 +1,19 @@
 import './bootstrap';
 
+// Set up CSRF token for all Ajax requests
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+
+// $(document).ready(function () {
+
 window.onload = function () {
     loadProducts(1);
     fetchCartItemNum()
 };
+// });
 
 function loadProducts(page) {
     $.ajax({
@@ -68,15 +78,20 @@ function fetchCartItemNum() {
             if (itemsLength > 0) {
                 $('#cart-item-num').text(itemsLength);
                 $('#cart-item-num').removeClass('hidden');
+            } else {
+                $('#cart-item-num').addClass('hidden');
             }
         }
     });
 }
 
 // product detail
-
 if (window.location.href.includes('/products/detail/')) {
     console.log('true')
+    productDetail();
+}
+
+function productDetail() {
     const productId = window.location.pathname.split('/').pop();
 
     $.ajax({
@@ -110,116 +125,119 @@ if (window.location.href.includes('/products/detail/')) {
             alert('Failed to fetch product details');
         }
     });
-
-    $('#increment').click(function (e) {
-        e.preventDefault();
-        var currentVal = parseInt($('#quantity-input').val());
-        $('#quantity-input').val(currentVal + 1);
-    });
-
-    $('#decrement').click(function (e) {
-        e.preventDefault();
-        var currentVal = parseInt($('#quantity-input').val());
-        if (currentVal > 1) {
-            $('#quantity-input').val(currentVal - 1);
-        }
-    });
-
-
-    // Set up CSRF token for all Ajax requests
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
-
-    $('#addtocart').submit(function (e) {
-        e.preventDefault();
-
-        var quantity = $('#quantity-input').val();
-
-        $.ajax({
-            url: '/api/v1/cart-item',
-            type: 'POST',
-            data: {
-                quantity: quantity,
-                productId: productId
-            },
-            dataType: 'json',
-            success: function (response) {
-                $('#addtocart')[0].reset();
-
-                fetchCartItemNum()
-
-                alert(response.message);
-            },
-            error: function (xhr, status, error) {
-                alert('Failed to add product to cart.');
-            }
-        });
-    });
 }
+
+$('#increment').click(function (e) {
+    e.preventDefault();
+    var currentVal = parseInt($('#quantity-input').val());
+    $('#quantity-input').val(currentVal + 1);
+});
+
+$('#decrement').click(function (e) {
+    e.preventDefault();
+    var currentVal = parseInt($('#quantity-input').val());
+    if (currentVal > 1) {
+        $('#quantity-input').val(currentVal - 1);
+    }
+});
+
+$('#addtocart').submit(function (e) {
+    e.preventDefault();
+
+    var quantity = $('#quantity-input').val();
+    const productId = window.location.pathname.split('/').pop();
+
+    $.ajax({
+        url: '/api/v1/cart-item',
+        type: 'POST',
+        data: {
+            quantity: quantity,
+            productId: productId
+        },
+        dataType: 'json',
+        success: function (response) {
+            $('#addtocart')[0].reset();
+
+            fetchCartItemNum()
+
+            alert(response.message);
+        },
+        error: function (xhr, status, error) {
+            alert('Failed to add product to cart.');
+        }
+    });
+});
 
 // cart
 if (window.location.href.includes('/cart')) {
     fetchDefaultCart();
+}
 
-    function fetchDefaultCart() {
-        $.ajax({
-            url: `/api/v1/cart/`,
-            type: 'GET',
-            dataType: 'json',
-            success: function (response) {
-                const cartItems = response.cart;
-                console.log(cartItems);
+function fetchDefaultCart() {
+    localStorage.removeItem('id');
 
-                if (cartItems && cartItems.items.length > 0) {
-                    displayCartItems(cartItems.items);
-                } else {
-                    $('#cart-items').html('<p>Your cart is empty.</p>');
-                }
-            },
-            error: function () {
-                $('#cart-items').html('<p>Failed to load cart items.</p>');
+    $.ajax({
+        url: `/api/v1/cart/`,
+        type: 'GET',
+        dataType: 'json',
+        success: function (response) {
+            const cartItems = response.cart;
+            console.log(cartItems);
+
+            localStorage.setItem('id', cartItems.id);
+
+            if (cartItems && cartItems.items.length > 0) {
+                displayCartItems(cartItems.items);
+            } else {
+                $('#cart-items').html('<p>Your cart is empty.</p>');
             }
-        });
-    }
+        },
+        error: function () {
+            $('#cart-items').html('<p>Failed to load cart items.</p>');
+        }
+    });
+}
 
-    // function fetchCartItems(cartId) {
-    //     $.ajax({
-    //         url: `/api/v1/cart/${cartId}`,
-    //         type: 'GET',
-    //         success: function (response) {
-    //             const cartItems = response.cart;
-    //             console.log(cartItems);
+// function fetchCartItems(cartId) {
+//     $.ajax({
+//         url: `/api/v1/cart/${cartId}`,
+//         type: 'GET',
+//         success: function (response) {
+//             const cartItems = response.cart;
+//             console.log(cartItems);
 
-    //             if (cartItems && cartItems.items.length > 0) {
-    //                 displayCartItems(cartItems.items);
-    //             } else {
-    //                 $('#cart-items').html('<p>Your cart is empty.</p>');
-    //             }
-    //         },
-    //         error: function (jqXHR, textStatus, errorThrown) {
-    //             $('#cart-items').html('<p>Failed to load cart items.</p>');
-    //         }
-    //     });
-    // }
+//             if (cartItems && cartItems.items.length > 0) {
+//                 displayCartItems(cartItems.items);
+//             } else {
+//                 $('#cart-items').html('<p>Your cart is empty.</p>');
+//             }
+//         },
+//         error: function (jqXHR, textStatus, errorThrown) {
+//             $('#cart-items').html('<p>Failed to load cart items.</p>');
+//         }
+//     });
+// }
 
-    function displayCartItems(items) {
-        let cartHtml = `
+function displayCartItems(items) {
+    console.log(items)
+    let cartHtml = `
             <div class="flex gap-8">
                 <div>
                     <ul>
             `;
 
-        items.forEach(function (item) {
-            cartHtml += `
+    items.forEach(function (item) {
+        cartHtml += `
                 <li class="mb-4">
                     <div class="flex gap-4">
-                        <img src="${item.product.imageUrl}" alt="${item.product.name}" class="w-16 h-16 object-cover" />
+                        <img src="${item.product.imageUrl}" alt="${item.product.name}" class="w-20 h-20 object-cover" />
                         <div>
                             <p class="font-semibold">${item.product.name}</p>
                             <p class="font-thin text-gray-800">${truncateText(item.product.description, 80)}</p>
+                            <div class="-ml-1 clear-cart-item" data-product-id="${item.product.id}">
+                                <p>hdfl</p>
+                            </div>
+
                         </div>
                         <div class="flex items-center gap-4">
                             <div>
@@ -231,19 +249,19 @@ if (window.location.href.includes('/cart')) {
                     </div>
                 </li>
             `;
-        });
+    });
 
-        cartHtml += `
+    cartHtml += `
             </ul>
         </div>
         `;
 
-        const subtotal = items.reduce((acc, item) => acc + item.price, 0); // Calculate subtotal dynamically
-        const shipping = 5.00;
-        const tax = subtotal * 0.05;
-        const total = subtotal + shipping + tax;
+    const subtotal = items.reduce((acc, item) => acc + item.price, 0); // Calculate subtotal dynamically
+    const shipping = 5.00;
+    const tax = subtotal * 0.05;
+    const total = subtotal + shipping + tax;
 
-        cartHtml += `
+    cartHtml += `
             <div class="order-summary p-6 bg-white shadow-md rounded-lg flex-1 sticky top-1/3 h-full overflow-auto">
                 <h2 class="text-xl font-semibold mb-4">Order Summary</h2>
                 <div class="flex justify-between mt-4 font-bold">
@@ -266,6 +284,60 @@ if (window.location.href.includes('/cart')) {
             </div>
         `;
 
-        $('#cart-items').html(cartHtml);
+    $('#cart-items').html(cartHtml);
+}
+
+// cart delete
+$('#clear-cart').click(function () {
+    if (confirm('Are you sure you want to clear your cart?')) {
+        let cartId = localStorage.getItem('id');
+        clearCart(cartId);
     }
-}    
+
+});
+
+$(document).on('click', '.clear-cart-item', function () {
+    let productId = $(this).data('product-id');
+    console.log(productId);
+    clearCartItem(productId);
+});
+
+function clearCart(cartId) {
+    $.ajax({
+        url: `/api/v1/cart/${cartId}`,
+        type: 'DELETE',
+        success: function (response) {
+
+            $('#cart-item-num').addClass('hidden');
+
+            console.log(response)
+            const cartItems = response.cart;
+
+            if (cartItems && cartItems.items.length > 0) {
+                displayCartItems(cartItems.items);
+            } else {
+                $('#cart-items').html('<p>Your cart is empty.</p>');
+            }
+
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.error('Error clearing cart:', textStatus, errorThrown);
+        }
+    });
+}
+
+function clearCartItem(productId) {
+    $.ajax({
+        url: `/api/v1/cart-item/${productId}`,
+        type: 'DELETE',
+        success: function (response) {
+
+            fetchDefaultCart();
+            fetchCartItemNum();
+
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.error('Error clearing cart:', textStatus, errorThrown);
+        }
+    });
+}

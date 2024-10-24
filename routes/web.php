@@ -21,6 +21,10 @@ Route::get('/cart', function () {
     return view('carts.index');
 })->name('carts.index');
 
+Route::get('/cart/clear', function () {
+    return view('carts.delete');
+})->name('carts.delete');
+
 
 // Route::redirect('/','/api/v1/products');
 
