@@ -18,6 +18,10 @@ Route::get('/cart/clear', function () {
     return view('carts.delete');
 })->name('carts.delete');
 
+Route::get('user-test', function () {
+    return view('test');
+});
+
 
 Route::middleware([
     'auth:sanctum',

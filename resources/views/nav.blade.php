@@ -3,8 +3,9 @@
         <div class="logo">
             <a href="/" class="flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse">
 
-                <svg class="hover:fill-gray-800 w-20 h-auto text-center" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px"
-                    y="0px" viewBox="0 0 128 160" enable-background="new 0 0 128 128" xml:space="preserve">
+                <svg class="hover:fill-gray-800 w-20 h-auto text-center" xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" viewBox="0 0 128 160"
+                    enable-background="new 0 0 128 128" xml:space="preserve">
                     <g>
                         <path
                             d="M112.728,88.646c-0.188-0.188-0.441-0.293-0.707-0.293l-12.693,0.003V85.99c0-0.553-0.447-1-1-1L62.24,84.989   c-0.075,0-0.149,0.009-0.221,0.024c-0.222-0.015-0.446-0.023-0.671-0.023c-2.954,0-5.71,1.142-7.782,3.214   c-2.073,2.072-3.215,4.828-3.215,7.759c0,6.049,4.923,10.973,10.973,10.976c0.001,0,0.001,0,0.001,0   c0.241,0,0.479-0.01,0.714-0.026c0.064,0.016,0.132,0.023,0.199,0.023l36.089,0.003c0.266,0,0.52-0.105,0.707-0.293   s0.293-0.441,0.293-0.707v-2.367h12.693c0.553,0,1-0.447,1-1V89.353C113.021,89.087,112.915,88.833,112.728,88.646z M97.327,89.355   v13.216v2.367l-34.825-0.003c-0.089-0.027-0.181-0.042-0.274-0.042c-0.025,0-0.052,0.001-0.078,0.003   c-0.271,0.024-0.544,0.042-0.824,0.042c-4.948-0.003-8.974-4.029-8.974-8.976c0-4.947,4.024-8.973,8.972-8.973h0.001   c0.295,0,0.565,0.017,0.828,0.04c0.132,0.013,0.262-0.004,0.384-0.041l34.791,0.001V89.355z M111.021,101.571H99.327V90.355   l11.693-0.003V101.571z" />
@@ -55,7 +56,41 @@
                     id="cart-item-num"></div>
             </div>
 
-            <a href="#" class="mx-1 p-2 bg-gray-800 rounded-md hover:bg-gray-900 text-white">Login</a>
+            <div id="auth">
+                {{--  --}}
+            </div>
+
         </div>
     </div>
 </nav>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $('#logoutButton').on('click', function() {
+        const token = localStorage.getItem('auth_token'); // Retrieve the token from local storage
+
+        // Make sure token exists before attempting to log out
+        if (token) {
+            $.ajax({
+                url: '/api/logout', // The logout route
+                type: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`, // Send the token in the Authorization header
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}' // Include CSRF token for security
+                },
+                success: function(response) {
+                    // Assuming the backend responds with a success message
+                    console.log(response.message || 'Logged out successfully!');
+                    localStorage.removeItem('auth_token'); // Clear the token from local storage
+                    // Optionally redirect or update the UI
+                    // window.location.href = '/login'; // Uncomment to redirect to login page
+                },
+                error: function(error) {
+                    console.log("Logout failed:", error);
+                }
+            });
+        } else {
+            console.log("No token found. User is already logged out.");
+        }
+    });
+</script>

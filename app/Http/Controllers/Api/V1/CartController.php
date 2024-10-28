@@ -16,8 +16,8 @@ class CartController extends Controller
     public function index(Request $request)
     {
         // TODO: Fix Admin can view all the cart instead of the below code!
-        if (Auth::check()) {
-            $userId = Auth::user()->id;
+        if (Auth::guard('sanctum')->check()) {
+            $userId = auth('sanctum')->user()->id;
             $cart = Cart::firstOrCreate(['user_id' => $userId]);
         } else {
             $guestIdentifier = $request->cookie('guest_identifier');
@@ -55,10 +55,9 @@ class CartController extends Controller
      */
     public function store(StoreCartRequest $request)
     {
-
-        if (Auth::check()) {
+        if (Auth::guard('sanctum')->check()) {
             // User is authenticated
-            $userId = Auth::user()->id;
+            $userId = auth('sanctum')->user()->id;
 
             // Create or retrieve the cart for the authenticated user
             $cart = Cart::firstOrCreate(['user_id' => $userId]);
@@ -95,8 +94,8 @@ class CartController extends Controller
         try {
             $cart = Cart::findOrFail($cartId);
 
-            if (Auth::check()) {
-                $userId = Auth::user()->id;
+            if (Auth::guard('sanctum')->check()) {
+                $userId = auth('sanctum')->user()->id;
 
                 if ($cart->user_id !== $userId) {
                     return response()->json([
@@ -151,8 +150,8 @@ class CartController extends Controller
         try {
             $cart = Cart::findOrFail($id);
 
-            if (Auth::check()) {
-                $userId = Auth::user()->id;
+            if (Auth::guard('sanctum')->check()) {
+                $userId = auth('sanctum')->user()->id;
 
                 if ($cart->user_id !== $userId) {
                     return response()->json([

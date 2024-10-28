@@ -10,6 +10,8 @@ use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
 use App\Http\Resources\V1\ProductResource;
 use App\Http\Resources\V1\ProductCollection;
+use Illuminate\Support\Facades\Auth;
+
 
 class ProductController extends Controller
 {
@@ -22,10 +24,10 @@ class ProductController extends Controller
         $filter = new ProductFilter;
 
         $filterItems = $filter->transform($request);
-        
+
         $products = Product::where($filterItems);
         // dd($products);
-// 
+        // 
         return new ProductCollection($products->paginate()->appends($request->query()));
     }
 

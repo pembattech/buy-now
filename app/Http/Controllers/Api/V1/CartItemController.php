@@ -34,6 +34,7 @@ class CartItemController extends Controller
      */
     public function store(StoreCartItemRequest $request)
     {
+        
         // Find the product
         $product = Product::find($request->product_id);
 
@@ -116,9 +117,9 @@ class CartItemController extends Controller
      */
     public function destroy(Request $request, $productId)
     {
-        if (Auth::check()) {
+        if (Auth::guard('sanctum')->check()) {
             // User is authenticated, get the user_id
-            $userId = Auth::user()->id;
+            $userId = auth('sanctum')->user()->id;
 
             $cartItem = CartItem::where('product_id', $productId)
                 ->whereHas('cart', function ($query) use ($userId) {
