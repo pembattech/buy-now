@@ -5,7 +5,7 @@
                 <div class="text-center mb-6">
                     <h1 class="text-2xl font-semibold text-gray-900">Sign In</h1>
                     <p class="text-gray-700">
-                        New user? <span><a href="#" class="text-blue-500 hover:underline">Create an
+                        New user? <span><a href="{{ route('register') }}" class="text-blue-500 hover:underline">Create an
                                 account</a></span>
                     </p>
                 </div>
@@ -26,35 +26,7 @@
                         <input type="submit" name="submit" value="Sign In"
                             class="px-6 py-2 bg-blue-500 text-white font-medium rounded-full cursor-pointer focus:outline-none hover:bg-blue-600">
                     </div>
-                    </id=>
-                    <div class="flex items-center my-6">
-                        <span class="flex-1 border-t border-gray-300"></span>
-                        <span class="px-4 text-gray-500 font-medium">Or</span>
-                        <span class="flex-1 border-t border-gray-300"></span>
-                    </div>
-                    <div class="space-y-4">
-                        <div>
-                            <a href="#"
-                                class="flex items-center justify-center px-4 py-2 border-2 border-gray-300 rounded-full text-gray-900 hover:bg-gray-100 transition">
-                                <i class="ion ion-logo-google text-red-600 text-xl mr-2"></i>
-                                <span>Sign in with Google</span>
-                            </a>
-                        </div>
-                        <div>
-                            <a href="#"
-                                class="flex items-center justify-center px-4 py-2 border-2 border-gray-300 rounded-full text-gray-900 hover:bg-gray-100 transition">
-                                <i class="ion ion-logo-facebook text-blue-600 text-xl mr-2"></i>
-                                <span>Sign in with Facebook</span>
-                            </a>
-                        </div>
-                        <div>
-                            <a href="#"
-                                class="flex items-center justify-center px-4 py-2 border-2 border-gray-300 rounded-full text-gray-900 hover:bg-gray-100 transition">
-                                <i class="ion ion-logo-apple text-gray-900 text-xl mr-2"></i>
-                                <span>Sign in with Apple</span>
-                            </a>
-                        </div>
-                    </div>
+                </form>
             </section>
         </div>
     </main>
@@ -79,6 +51,8 @@
 
                         document.cookie = 'guest_identifier' + '=; Max-Age=-99999999;';
                         alert('Logged in successfully!');
+
+                        window.location.href = '/';
 
                     } else {
                         alert('Login failed');

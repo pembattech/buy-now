@@ -25,7 +25,6 @@
         </div>
 
         <div class="flex items-center space-x-4">
-            <a href="{{ route('dashboard') }}" class="mx-1 hover:underline">Home</a>
             <a href="{{ route('products.index') }}" class="mx-1 hover:underline">Shop</a>
             <div class="relative">
                 <a href="{{ route('carts.index') }}" class="mx-1">
@@ -63,34 +62,3 @@
         </div>
     </div>
 </nav>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $('#logoutButton').on('click', function() {
-        const token = localStorage.getItem('auth_token'); // Retrieve the token from local storage
-
-        // Make sure token exists before attempting to log out
-        if (token) {
-            $.ajax({
-                url: '/api/logout', // The logout route
-                type: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`, // Send the token in the Authorization header
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}' // Include CSRF token for security
-                },
-                success: function(response) {
-                    // Assuming the backend responds with a success message
-                    console.log(response.message || 'Logged out successfully!');
-                    localStorage.removeItem('auth_token'); // Clear the token from local storage
-                    // Optionally redirect or update the UI
-                    // window.location.href = '/login'; // Uncomment to redirect to login page
-                },
-                error: function(error) {
-                    console.log("Logout failed:", error);
-                }
-            });
-        } else {
-            console.log("No token found. User is already logged out.");
-        }
-    });
-</script>

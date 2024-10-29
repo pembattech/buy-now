@@ -65,6 +65,28 @@ function truncateText(text, maxLength) {
     }
 }
 
+function fetchUserInfo(userId) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: `api/user-info/${userId}`,
+            type: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('auth_token')
+            },
+            success: function (response) {
+                if (response.id) {
+                    resolve(response);
+                } else {
+                    reject('Access denied or user not found.');
+                }
+            },
+            error: function (error) {
+                reject(error);
+            }
+        });
+    });
+}
 
 
 function fetchUserId(token) {
@@ -93,60 +115,65 @@ function fetchUserId(token) {
 function fetchCartItemNum() {
     const token = localStorage.getItem('auth_token');
 
-    if (token) {
-        fetchUserId(token).then(isAuthenticated => {
-            const headers = {};
+    const updateCartDisplay = (cartItems) => {
+        const itemsLength = cartItems.length;
+        if (itemsLength > 0) {
+            $('#cart-item-num').text(itemsLength).removeClass('hidden');
+        } else {
+            $('#cart-item-num').addClass('hidden');
+        }
+    };
 
-            if (isAuthenticated) {
-                headers['Authorization'] = `Bearer ${token}`;
-            }
+    const updateAuthDisplay = (userName) => {
+        if (userName) {
+            $('#auth').html(`
+                <span>Welcome, ${userName}</span>
+                <button id="logout" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">Logout</button>
+            `);
+        } else {
+            $('#auth').html(`<a href="/login" class="inline-flex items-center px-4 py-2 bg-blue-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">Login</a>`);
+        }
+    };
 
-            $.ajax({
-                url: `/api/v1/cart/`,
-                type: 'GET',
-                headers: headers,
-                dataType: 'json',
-                success: function (response) {
-                    console.log(response);
-                    const cartItems = response.cart.items;
-                    const itemsLength = cartItems.length;
-
-                    if (itemsLength > 0) {
-                        $('#cart-item-num').text(itemsLength);
-                        $('#cart-item-num').removeClass('hidden');
-                    } else {
-                        $('#cart-item-num').addClass('hidden');
-                    }
-                },
-                error: function (error) {
-                    console.log("An error occurred while fetching cart items:", error);
-                }
-            });
-        }).catch(error => {
-            console.log("An error occurred in authentication check:", error);
-        });
-    } else {
+    const fetchCart = (headers = {}) => {
         $.ajax({
             url: `/api/v1/cart/`,
             type: 'GET',
+            headers: headers,
             dataType: 'json',
             success: function (response) {
                 const cartItems = response.cart.items;
-                const itemsLength = cartItems.length;
+                updateCartDisplay(cartItems);
 
-                if (itemsLength > 0) {
-                    $('#cart-item-num').text(itemsLength);
-                    $('#cart-item-num').removeClass('hidden');
+                const userId = response.cart.userId;
+                if (userId) {
+                    fetchUserInfo(userId)
+                        .then(user => {
+                            updateAuthDisplay(user.name);
+                        })
+                        .catch(error => console.error('Error fetching user info:', error));
                 } else {
-                    $('#cart-item-num').addClass('hidden');
+                    updateAuthDisplay(null);
                 }
             },
             error: function (error) {
-                console.log("An error occurred while fetching cart items for guest:", error);
+                console.error("An error occurred while fetching cart items:", error);
             }
         });
+    };
+
+    if (token) {
+        fetchUserId(token)
+            .then(isAuthenticated => {
+                const headers = isAuthenticated ? { 'Authorization': `Bearer ${token}` } : {};
+                fetchCart(headers);
+            })
+            .catch(error => console.error("An error occurred in authentication check:", error));
+    } else {
+        fetchCart();
     }
 }
+
 
 
 // product detail
@@ -542,3 +569,30 @@ function clearCartItem(productId) {
         });
     }
 }
+
+$(document).on('click', '#logout', function() {
+    $.ajax({
+        url: '/api/v1/logout',
+        type: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('auth_token')
+        },
+        success: function(response) {
+            if (response.message) {
+                localStorage.removeItem('auth_token');
+
+                alert('Logged out successfully!');
+
+                window.location.href = '/';
+            } else {
+                alert('Logout failed');
+            }
+        },
+        error: function(error) {
+            console.log(error);
+            window.location.href = '/';
+        }
+    });
+});

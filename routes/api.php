@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\ProductController;
 use App\Http\Controllers\Api\V1\CartController;
 use App\Http\Controllers\Api\V1\CartItemController;
+use App\Models\User;
 
 
 // Route::get('/user', function (Request $request) {
@@ -22,8 +23,18 @@ Route::get('/user', function (Request $request) {
     }
 });
 
+Route::get('user-info/{user_id}', function ($user_id) {
+    if (Auth::guard('sanctum')->check()) {
+        $userId = auth('sanctum')->user()->id;
+        if ($userId == $user_id) {
 
+            return User::find($user_id);
+        } else {
+            return [$userId, $user_id];
+        }
 
+    }
+});
 
 // Versioned API Routes (v1)
 Route::group(['prefix' => 'v1'], function () {
