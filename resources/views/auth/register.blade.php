@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <main class="flex items-center justify-center min-h-screen bg-gray-100">
+    <main class="register-page hidden flex items-center justify-center min-h-screen bg-gray-100">
         <div class="container max-w-5xl px-8">
             <section class="max-w-md mx-auto p-10 bg-white rounded-lg shadow-lg">
                 <div class="text-center mb-6">
@@ -41,6 +41,16 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+             $(document).ready(function() {
+            const token = localStorage.getItem('auth_token');
+
+            if (token) {
+                window.location.href = "/";
+            } else {
+                $('.register-page').removeClass('hidden');
+            }
+        });
+
         $('#registerForm').on('submit', function(e) {
             e.preventDefault();
 

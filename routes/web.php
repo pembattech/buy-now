@@ -20,9 +20,13 @@ Route::get('/cart/clear', function () {
     return view('carts.delete');
 })->name('carts.delete');
 
-Route::get('user-test', function () {
-    return view('test');
-});
+// Route::get('/login', function () {
+//     if (auth('sanctum')->check()) {
+//         return redirect()->route('products.index'); // Add `return` to ensure the redirect is executed
+//     }
+//     return view('auth.login'); // Load the login page if the user is not authenticated
+// })->name('login');
+
 
 
 Route::middleware([
