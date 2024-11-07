@@ -1,67 +1,78 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# BuyNow eCommerce Platform
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+BuyNow is a fully-featured eCommerce platform built using Laravel. It provides secure token-based authentication with Laravel Sanctum, allowing both guest and registered users to place, track, and manage orders seamlessly. The platform also includes product filtering, easy guest checkout via cookies, and an intuitive frontend built with Laravel Blade.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+-   **User Authentication**: Secure login and registration for users, with token-based authentication using Laravel Sanctum.
+-   **Order Management**: Users can place, track, and manage orders easily.
+-   **Guest Checkout**: Allows guest users to place orders without needing to register, using a unique guest identifier stored in cookies.
+-   **Product Filtering**: Advanced filtering options on the product API for better search functionality.
+-   **Responsive Frontend**: Built with Laravel Blade, optimized for a smooth user experience across devices.
+-   **Admin Features**: Admin users can manage products, orders, and users efficiently through a secure interface.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## API Endpoints
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+#### **User Authentication**
 
-## Learning Laravel
+- **Register a new user.**
+  `POST /api/v1/register`
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- **Log in a registered user.**
+  `POST /api/v1/login`
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- **Log out the user.**
+  `POST /api/v1/logout`
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+#### **Cart Management**
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- **Retrieve the current cart for a guest (using cookies) or logged-in user.**
+  `GET /api/v1/cart`
 
-### Premium Partners
+- **Create the cart for guests or registered users.**
+  `POST /api/v1/cart`
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+- **Add an item to the cart for guests or registered users.**
+  `POST /api/v1/cart-item`
 
-## Contributing
+- **Remove an item from the cart.**
+  `DELETE /api/v1/cart-item/{product_id}`
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- **Clear all items from the cart (for guest or registered user).**
+  `DELETE /api/v1/cart/{cart_id}`
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+#### **Product Catalog**
 
-## Security Vulnerabilities
+- **List all products with pagination.**
+  `GET /api/v1/products`
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- **Retrieve details for a specific product.**
+  `GET /api/v1/products/{product_id}`
 
-## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-# buy-now
+#### **Filtering Query Parameters for Products**
+
+-   **Filter by ID**:
+    `GET /api/v1/products?id[eq]=1`
+-   **Filter by Name**:
+    `GET /api/v1/products?name[eq]=example`
+-   **Filter by Price**:
+    -   **Equal**:
+        `GET /api/v1/products?price[eq]=20`
+    -   **Greater Than**:
+        `GET /api/v1/products?price[gt]=20`
+    -   **Less Than**:
+        `GET /api/v1/products?price[lt]=50`
+-   **Filter by Stock**:
+    -   **Equal**:
+        `GET /api/v1/products?stock[eq]=100`
+    -   **Greater Than**:
+        `GET /api/v1/products?stock[gt]=50`
+    -   **Less Than**:
+        `GET /api/v1/products?stock[lt]=10`
+-   **Filter by Name with Like**:
+    `GET /api/v1/products?name[like]=%example%`
