@@ -76,3 +76,5 @@ BuyNow is a fully-featured eCommerce platform built using Laravel. It provides s
         `GET /api/v1/products?stock[lt]=10`
 -   **Filter by Name with Like**:
     `GET /api/v1/products?name[like]=%example%`
+
+---
